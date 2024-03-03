@@ -3,11 +3,12 @@ package com.acme.banking.dbo.domain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 public class Client {
     private final int id;
     private final String name;
-    private Collection<Account> accounts = new ArrayList<>(); //TODO
+    private final Collection<Account> accounts = new ArrayList<>();
 
     public Client(int id, String name) {
         if (id <= 0) throw new IllegalArgumentException("Bad ID");
@@ -37,4 +38,16 @@ public class Client {
         this.accounts.add(account);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return id == client.id && Objects.equals(name, client.name) && Objects.equals(accounts, client.accounts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, accounts);
+    }
 }

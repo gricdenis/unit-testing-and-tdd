@@ -1,9 +1,11 @@
-package com.acme.banking.dbo.service;
+package com.acme.banking.dbo.repository;
 
 import com.acme.banking.dbo.domain.Account;
 
+import java.util.Optional;
+
 public interface AccountRepository {
-    Account getById(int id);
+    Optional<Account> getById(int id);
 
     void save(Account account);
 }

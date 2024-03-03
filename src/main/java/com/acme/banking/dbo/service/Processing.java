@@ -3,14 +3,19 @@ package com.acme.banking.dbo.service;
 import com.acme.banking.dbo.domain.Account;
 import com.acme.banking.dbo.domain.Cash;
 import com.acme.banking.dbo.domain.Client;
+import com.acme.banking.dbo.exception.AccountNotFoundException;
+import com.acme.banking.dbo.exception.ClientNotFoundException;
+import com.acme.banking.dbo.exception.TransferAccountAmountException;
+import com.acme.banking.dbo.repository.AccountRepository;
+import com.acme.banking.dbo.repository.ClientRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public class Processing {
-    private ClientRepository clientRepository;
-    private AccountRepository accountRepository;
-
-    private Cash cash;
+    private final ClientRepository clientRepository;
+    private final AccountRepository accountRepository;
+    private final Cash cash;
 
 
     public Processing(ClientRepository clientRepository, AccountRepository accountRepository, Cash cash) {
@@ -29,14 +34,21 @@ public class Processing {
     }
 
     public Collection<Account> getAccountsByClientId(int clientId) {
-        Client client = clientRepository.getById(clientId);
+        Client client = clientRepository.getById(clientId)
+                .orElseThrow(() -> new ClientNotFoundException(String.format("Client with id: %d not found", clientId)));
 
         return client.getAccounts();
     }
 
     public void transfer(int fromAccountId, int toAccountId, double amount) {
-        Account accountFrom = accountRepository.getById(fromAccountId);
-        Account accountTo = accountRepository.getById(toAccountId);
+        Account accountFrom = accountRepository.getById(fromAccountId)
+                .orElseThrow(() -> new AccountNotFoundException(String.format("Account with id %d not found", fromAccountId)));
+        Account accountTo = accountRepository.getById(toAccountId)
+                .orElseThrow(() -> new AccountNotFoundException(String.format("Account with id %d not found", toAccountId)));
+
+        if ((accountFrom.getAmount() - amount) < 0) {
+            throw new TransferAccountAmountException(String.format("Account amount with id: %d less than can be transferred", fromAccountId));
+        }
 
         accountFrom = accountFrom.changeAmount(accountFrom,accountFrom.getAmount() - amount);
         accountTo = accountTo.changeAmount(accountTo,accountTo.getAmount() + amount);

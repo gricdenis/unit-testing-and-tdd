@@ -1,5 +1,7 @@
 package com.acme.banking.dbo.domain;
 
+import java.util.Objects;
+
 public class SavingAccount implements Account {
     private final int id;
     private final Client client;
@@ -33,5 +35,18 @@ public class SavingAccount implements Account {
     @Override
     public SavingAccount changeAmount(Account account, double amount){
         return new SavingAccount(account.getId(), account.getClient(), amount);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SavingAccount that = (SavingAccount) o;
+        return id == that.id && Double.compare(that.amount, amount) == 0 && Objects.equals(client, that.client);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, client, amount);
     }
 }
