@@ -41,6 +41,10 @@ public class Processing {
     }
 
     public void transfer(int fromAccountId, int toAccountId, double amount) {
+        if (fromAccountId == toAccountId) {
+            throw new IllegalArgumentException("Id from is the same Id to");
+        }
+
         Account accountFrom = accountRepository.getById(fromAccountId)
                 .orElseThrow(() -> new AccountNotFoundException(String.format("Account with id %d not found", fromAccountId)));
         Account accountTo = accountRepository.getById(toAccountId)
@@ -49,6 +53,7 @@ public class Processing {
         if ((accountFrom.getAmount() - amount) < 0) {
             throw new TransferAccountAmountException(String.format("Account amount with id: %d less than can be transferred", fromAccountId));
         }
+
 
         accountFrom = accountFrom.changeAmount(accountFrom,accountFrom.getAmount() - amount);
         accountTo = accountTo.changeAmount(accountTo,accountTo.getAmount() + amount);
