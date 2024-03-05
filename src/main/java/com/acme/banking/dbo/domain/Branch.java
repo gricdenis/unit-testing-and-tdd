@@ -5,7 +5,9 @@ import java.util.Collection;
 import static java.util.Collections.unmodifiableCollection;
 
 public class Branch {
-    private Collection<Account> accounts; //TODO
+
+    public String name = "Leninskiy";
+    private Collection<Account> accounts;
 
     public Branch(Collection<Account> accounts) {
         this.accounts = accounts;
@@ -16,6 +18,20 @@ public class Branch {
     }
 
     public Collection<Branch> getChildren() {
-        return null; //TODO
+        return null;
+    }
+
+    public String toReport(){
+        if (getName().isEmpty()) throw new IllegalArgumentException();
+
+        return "# " + this.getName() + this.getSum();
+    }
+
+    private String getSum() {
+        return String.valueOf(100000.0);
+    }
+
+    public String getName() {
+        return name;
     }
 }
